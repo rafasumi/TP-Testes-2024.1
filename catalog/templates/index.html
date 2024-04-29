@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %}
+
+<!-- Add additional CSS in static file -->
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+
+{% block content %}
+  <h1>Bib</h1>
+  <p>
+    Bem-vindo ao site da biblioteca municipal de <i>Xulambis</i>
+  </p>
+  <h2>Informações</h2>
+  <p>Disponibilidade de livros e autores da biblioteca:</p>
+  <ul>
+    <li><strong>Livros:</strong> {{ num_books }}</li>
+    <li><strong>Cópias:</strong> {{ num_instances }}</li>
+    <li><strong>Cópias disponíveis:</strong> {{ num_instances_available }}</li>
+    <li><strong>Autores:</strong> {{ num_authors }}</li>
+  </ul>
+{% endblock %}
