@@ -17,4 +17,8 @@
     <li><strong>Cópias disponíveis:</strong> {{ num_instances_available }}</li>
     <li><strong>Autores:</strong> {{ num_authors }}</li>
   </ul>
+
+  <p>
+    Você já visitou essa página {{ num_visits }} vez{{ num_visits|pluralize:"es" }}.
+  </p>
 {% endblock %}
