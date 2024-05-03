@@ -29,7 +29,7 @@
                 <li><a href="{% url 'my-borrowed' %}">My Borrowed</a></li>
 
                 <li>
-                  <form id="logout-form" method="post" action="{% url 'admin:logout' %}">
+                  <form id="logout-form" method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-link">Logout</button>
                   </form>
