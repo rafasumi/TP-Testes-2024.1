@@ -36,7 +36,7 @@
                   </form>
                 </li>
                 <br>
-                {% if perms.catalog.can_mark_returned %}
+                {% if user.is_staff %}
                   Staff
                   <li><a href="{% url 'all-borrowed' %}">Todos emprestados</a></li>
                 {% endif %}
