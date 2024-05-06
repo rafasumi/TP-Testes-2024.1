@@ -32,15 +32,15 @@ class Genre(models.Model):
 
 
 class Book(models.Model):
-    title = models.CharField(max_length=200)
-    author = models.ForeignKey('Author', on_delete=models.RESTRICT, null=True)
-    summary = models.TextField(
+    title = models.CharField('Título', max_length=200)
+    author = models.ForeignKey('Author', verbose_name='Autor', on_delete=models.RESTRICT, null=True)
+    summary = models.TextField('Sumário',
         max_length=1000, help_text='Insira uma descrição do livro')
     isbn = models.CharField('ISBN', max_length=13,
                             unique=True,
                             help_text='<a href="https://www.isbn-international.org/content/what-isbn'
                                       '">Número ISBN</a>')
-    genre = models.ManyToManyField('Genre', help_text='Selecione os gêneros')
+    genre = models.ManyToManyField('Genre', verbose_name='Gênero', help_text='Selecione os gêneros')
 
     def __str__(self):
         return self.title
