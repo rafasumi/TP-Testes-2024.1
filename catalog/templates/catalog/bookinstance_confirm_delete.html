@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Deletar cópia de: {{ bookinstance.book.title }}</h1>
+
+<p>Você tem certeza que gostaria de deletar essa cópia?</p>
+
+<form action="" method="POST">
+  {% csrf_token %}
+  <input type="submit" action="" value="Sim">
+</form>
+
+{% endblock %}

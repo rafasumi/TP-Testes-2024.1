@@ -55,11 +55,11 @@ class Book(models.Model):
 class BookInstance(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
                           help_text="ID desse livro na biblioteca")
-    book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True)
-    imprint = models.CharField(max_length=200)
-    due_back = models.DateField(null=True, blank=True)
+    book = models.ForeignKey('Book', verbose_name='Livro', on_delete=models.RESTRICT, null=True)
+    imprint = models.CharField('Versão', max_length=200)
+    due_back = models.DateField('Prazo de devolução', null=True, blank=True)
     language = models.ForeignKey(
-        'Language', on_delete=models.RESTRICT, null=True)
+        'Language', on_delete=models.RESTRICT, verbose_name='Idioma', null=True)
     borrower = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
 
 

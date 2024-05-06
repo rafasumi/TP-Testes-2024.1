@@ -47,6 +47,9 @@
                   {% if perms.catalog.add_book %}
                     <li><a href="{% url 'book-create' %}">Criar livro</a></li>
                   {% endif %}
+                  {% if perms.catalog.add_bookinstance %}
+                    <li><a href="{% url 'bookinstance-create' %}">Criar cópia de livro</a></li>
+                  {% endif %}
                 {% endif %}
               {% else %}
                 <li><a href="{% url 'login' %}?next={{ request.path }}">Login</a></li>

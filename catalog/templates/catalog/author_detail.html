@@ -25,7 +25,7 @@
   <hr>
   <ul class="sidebar-nav">
     {% if perms.catalog.change_author %}
-      <li><a href="{% url 'author-update' author.id %}">Atualizar autor</a></li>
+      <li><a href="{% url 'author-update' author.id %}">Editar autor</a></li>
     {% endif %}
     {% if not author.book_set.all and perms.catalog.delete_author %}
       <li><a href="{% url 'author-delete' author.id %}">Deletar autor</a></li>

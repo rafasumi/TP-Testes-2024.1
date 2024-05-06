@@ -11,7 +11,6 @@ from .models import Book, Author, BookInstance, Genre
 
 from catalog.forms import RenewBookModelForm
 
-
 def index(request):
     # Generate counts of some of the main objects
     num_books = Book.objects.all().count()
@@ -106,6 +105,13 @@ class AllBorrowedBooksView(PermissionRequiredMixin, generic.ListView):
     template_name = 'catalog/bookinstance_all_borrowed_librarian.html'
     paginate_by = 10
 
+    def get_queryset(self):
+        return (
+            BookInstance.objects.exclude(borrower__isnull=True)
+            .filter(status__exact='o')
+            .order_by('due_back')
+        )
+
 
 class AuthorCreate(PermissionRequiredMixin, CreateView):
     model = Author
@@ -159,3 +165,28 @@ class BookDelete(PermissionRequiredMixin, DeleteView):
             return HttpResponseRedirect(
                 reverse('book-delete', kwargs={'pk': self.object.pk})
             )
+
+class BookInstanceCreate(PermissionRequiredMixin, CreateView):
+    model = BookInstance
+    fields = ['book', 'imprint', 'language']
+    permission_required = 'catalog.add_bookinstance'
+
+    def get_success_url(self):
+        return reverse('book', kwargs={'pk': self.object.book.pk})
+    
+
+class BookInstanceUpdate(PermissionRequiredMixin, UpdateView):
+    model = BookInstance
+    fields = ['imprint', 'language']
+    permission_required = 'catalog.change_bookinstance'
+
+    def get_success_url(self):
+        return reverse('book', kwargs={'pk': self.object.book.pk})
+
+
+class BookInstanceDelete(PermissionRequiredMixin, DeleteView):
+    model = BookInstance
+    permission_required = 'catalog.delete_bookinstance'
+
+    def get_success_url(self):
+        return reverse('book', kwargs={'pk': self.object.book.pk})

@@ -23,6 +23,8 @@
       {% endif %}
       <p><strong>Edição:</strong> {{ copy.imprint }}</p>
       <p class="text-muted"><strong>Id:</strong> {{ copy.id }}</p>
+      <p><a href="{% url 'bookinstance-update' copy.id %}">Editar cópia</a></p>
+      <p><a href="{% url 'bookinstance-delete' copy.id %}">Deletar cópia</a></p>
     {% endfor %}
   </div>
 {% endblock %}
@@ -34,7 +36,7 @@
   <hr>
   <ul class="sidebar-nav">
     {% if perms.catalog.change_book %}
-      <li><a href="{% url 'book-update' book.id %}">Atualizar livro</a></li>
+      <li><a href="{% url 'book-update' book.id %}">Editar livro</a></li>
     {% endif %}
     {% if not book.bookinstance_set.all and perms.catalog.delete_book %}
       <li><a href="{% url 'book-delete' book.id %}">Deletar livro</a></li>
