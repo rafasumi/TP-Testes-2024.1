@@ -1,11 +1,24 @@
+import uuid
+
+from datetime import date
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import UniqueConstraint
 from django.db.models.functions import Lower
 from django.urls import reverse
 
-import uuid
-from django.conf import settings
-from datetime import date
+
+class User(AbstractUser):
+    @property
+    def can_borrow_book(self):
+        if self.bookinstance_set.count() >= 3:
+            return False
+        
+        if self.bookinstance_set.filter(due_back__lt=date.today()).count() > 1:
+            return False
+
+        return True
 
 
 class Genre(models.Model):

@@ -1,5 +1,8 @@
 from django.contrib import admin
-from .models import Author, Genre, Book, BookInstance, Language
+from django.contrib.auth.admin import UserAdmin
+from .models import Author, Genre, Book, BookInstance, Language, User
+
+admin.site.register(User, UserAdmin)
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):

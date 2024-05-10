@@ -17,12 +17,15 @@
     class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'm' %}text-danger{% else %}text-warning{% endif %}">
     {{ copy.get_status_display }}
     </p>
-      {% if copy.status != 'a' %}
       <p><strong>Idioma:</strong> {{ copy.language }}</p>
+      {% if copy.status != 'a' %}
       <p><strong>Prazo de devolução:</strong> {{ copy.due_back }}</p>
       {% endif %}
       <p><strong>Edição:</strong> {{ copy.imprint }}</p>
       <p class="text-muted"><strong>Id:</strong> {{ copy.id }}</p>
+      {% if user.can_borrow_book and copy.status == 'a'  %}
+      <p><a href="{% url 'borrow-book' copy.id %}">Pegar emprestado</a></p>
+      {% endif %}
       {% if perms.catalog.change_bookinstance %}
       <p><a href="{% url 'bookinstance-update' copy.id %}">Editar cópia</a></p>
       {% endif %}
