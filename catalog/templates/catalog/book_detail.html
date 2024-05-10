@@ -23,8 +23,12 @@
       {% endif %}
       <p><strong>Edição:</strong> {{ copy.imprint }}</p>
       <p class="text-muted"><strong>Id:</strong> {{ copy.id }}</p>
+      {% if perms.catalog.change_bookinstance %}
       <p><a href="{% url 'bookinstance-update' copy.id %}">Editar cópia</a></p>
+      {% endif %}
+      {% if perms.catalog.delete_bookinstance %}
       <p><a href="{% url 'bookinstance-delete' copy.id %}">Deletar cópia</a></p>
+      {% endif %}
     {% endfor %}
   </div>
 {% endblock %}
