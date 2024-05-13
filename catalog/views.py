@@ -9,7 +9,7 @@ from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from .models import Book, Author, BookInstance
 
-from catalog.forms import RenewBookModelForm, BorrowBookModelForm
+from catalog.forms import RenewBookModelForm, BorrowBookModelForm, ReturnBookModelForm
 
 def index(request):
     # Generate counts of some of the main objects
@@ -72,7 +72,7 @@ def borrow_book(request, pk):
             book_instance.status = 'o'
             book_instance.save()
 
-            return HttpResponseRedirect(reverse('my-borrowed'))
+            return HttpResponseRedirect(reverse('all-borrowed'))
     else:
         proposed_renewal_date = datetime.date.today() + datetime.timedelta(weeks=3)
         form = BorrowBookModelForm(request.user, initial={'due_back': proposed_renewal_date})
@@ -83,6 +83,31 @@ def borrow_book(request, pk):
     }
 
     return render(request, 'catalog/book_borrow.html', context)
+
+@login_required
+def return_book(request, pk):
+    book_instance = get_object_or_404(BookInstance, pk=pk)
+
+    form = ReturnBookModelForm(request.user, request.POST)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            book_instance.borrower = None
+            book_instance.due_back = None
+            book_instance.status = 'a'
+            book_instance.save()
+
+            return HttpResponseRedirect(reverse('my-borrowed'))
+        
+    else:
+        form = ReturnBookModelForm(None, initial={'due_back': None})
+
+    context = {
+        'form': form,
+        'book_instance': book_instance,
+    }
+
+    return render(request, 'catalog/book_return.html', context)
 
 
 class BookListView(generic.ListView):

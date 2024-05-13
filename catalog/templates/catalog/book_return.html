@@ -1,0 +1,10 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Retornar o livro "{{ book_instance.book.title }}"</h1>
+
+  <form action="" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Retornar Livro">
+  </form>
+{% endblock %}

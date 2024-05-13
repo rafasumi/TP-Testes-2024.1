@@ -45,7 +45,7 @@ class BorrowBookModelForm(ModelForm):
 
         if not self.user.can_borrow_book:
             raise ValidationError(
-                _('Você não pode pegar livros emprestados se tiver algum livro atrasdo ou se já tiver pego 3 livros'))
+                _('Você não pode pegar livros emprestados se tiver algum livro atrasado ou se já tiver pego 3 livros'))
 
         return super().clean()
 
@@ -55,3 +55,19 @@ class BorrowBookModelForm(ModelForm):
         labels = {'due_back': _('Prazo desejado')}
         help_texts = {'due_back': _(
             'Insira uma data entre hoje e daqui 4 semanas.')}
+
+class ReturnBookModelForm(ModelForm):
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+
+    def clean(self) -> dict[str, Any]:
+        if self.instance.status != 'a':
+            raise ValidationError(_('Esta cópia não está emprestada.'))
+
+        return super().clean()
+
+    class Meta:
+        model = BookInstance
+        fields = ['due_back']
+        labels = {'due_back': _('Prazo desejado')}
