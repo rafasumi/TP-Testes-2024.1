@@ -20,7 +20,6 @@ class User(AbstractUser):
 
         return True
 
-
 class Genre(models.Model):
     name = models.CharField(
         max_length=200,

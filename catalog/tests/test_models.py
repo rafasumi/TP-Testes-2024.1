@@ -1,10 +1,13 @@
 from django.test import TestCase
 
 from catalog.models import Author, Genre, Book, BookInstance
-
 import datetime
-
 from django.utils import timezone
+from django.contrib.auth.hashers import check_password
+from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+from django.db.utils import IntegrityError
+from django.contrib.auth import authenticate
 
 class AuthorModelTest(TestCase):
     @classmethod
@@ -134,6 +137,74 @@ class BookInstanceModelTest(TestCase):
 
         BookInstance.objects.create(book=test_book, imprint='Unlikely Imprint, 2016', due_back=return_date, borrower='testuser1', status='r')
 
+class UserCreationTest(TestCase):
+    def test_create_valid_user(self):
+        User = get_user_model()
+        user_data = {
+            'username': 'testuser',
+            'password': 'secret123',
+            'email': 'test@example.com',
+            'first_name': 'John',
+            'last_name': 'Doe',
+        }
+
+        user = User.objects.create_user(**user_data)
+        self.assertEqual(user.username, 'testuser')
+        self.assertTrue(check_password('secret123', user.password))
+        self.assertEqual(user.email, 'test@example.com')
+        self.assertEqual(user.first_name, 'John')
+        self.assertEqual(user.last_name, 'Doe')
+
+    def test_create_user_with_invalid_email(self):
+        User = get_user_model()
+        user_data = {
+            'username': 'testuser',
+            'password': 'secret123',
+            'email': 'invalidemail',  # Email inválido só pra testar em
+            'first_name': 'John',
+            'last_name': 'Doe',
+        }
+
+        user = User(**user_data)
+
+        with self.assertRaises(ValidationError):
+            user.full_clean()
+
+    def test_create_user_with_duplicate_username(self):
+        User = get_user_model()
+        User.objects.create_user(username='testuser1', password='secret123', email='test@example.com')
+
+        with self.assertRaises(IntegrityError):
+            User.objects.create_user(username='testuser1', password='anotherpassword', email='another@example.com')
+
+class UserAuthenticationTest(TestCase):
+    def test_user_authentication_with_valid_credentials(self):
+        User = get_user_model()
+        user = User.objects.create_user(username='testuser', password='secret123', email='test@example.com')
+
+        authenticated_user = authenticate(username='testuser', password='secret123')
+        self.assertEqual(authenticated_user, user)
+
+    def test_user_authentication_with_invalid_password(self):
+        User = get_user_model()
+        User.objects.create_user(username='testuser', password='secret123', email='test@example.com')
+
+        authenticated_user = authenticate(username='testuser', password='wrongpassword')
+        self.assertIsNone(authenticated_user)
+
+    def test_user_password_hashing(self):
+        User = get_user_model()
+        user = User.objects.create_user(username='testuser', password='secret123', email='test@example.com')
+
+        stored_password_hash = user.password
+        is_password_correct = check_password('secret123', stored_password_hash)
+        self.assertTrue(is_password_correct)
+
+class GenreUniqueConstraintTest(TestCase):
+    def test_create_duplicate_genre_name(self):
+        Genre.objects.create(name='Fantasy')
+        with self.assertRaises(IntegrityError):
+            Genre.objects.create(name='Fantasy')
 
 
 

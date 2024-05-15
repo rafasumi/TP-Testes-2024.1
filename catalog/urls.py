@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('', views.index, name='index'),
@@ -11,7 +12,6 @@ urlpatterns = [
     path('bookinstance/create/', views.BookInstanceCreate.as_view(), name='bookinstance-create'),
     path('bookinstance/<uuid:pk>/update/', views.BookInstanceUpdate.as_view(), name='bookinstance-update'),
     path('bookinstance/<uuid:pk>/delete/', views.BookInstanceDelete.as_view(), name='bookinstance-delete'),
-    path('authors/', views.AuthorListView.as_view(), name='authors'),
     path('author/<int:pk>', views.AuthorDetailView.as_view(), name='author'),
     path('author/create/', views.AuthorCreate.as_view(), name='author-create'),
     path('author/<int:pk>/update/', views.AuthorUpdate.as_view(), name='author-update'),
@@ -19,6 +19,7 @@ urlpatterns = [
     path('mybooks/', views.LoanedBooksByUserListView.as_view(), name='my-borrowed'),
     path('allbooks/', views.AllBorrowedBooksView.as_view(), name='all-borrowed'),
     path('book/<uuid:pk>/renew/', views.renew_book_librarian, name='renew-book-librarian'),
+    path('authors/', login_required(views.AuthorListView.as_view()), name='authors'),
     path('book/<uuid:pk>/borrow/', views.borrow_book, name='borrow-book'),
     path('book/<uuid:pk>/return/', views.return_book, name='return-book'),
 ]
