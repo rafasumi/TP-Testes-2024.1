@@ -138,6 +138,10 @@ class BookModelTest(TestCase):
         # This will also fail if the urlconf is not defined.
         self.assertEqual(book.get_absolute_url(), '/catalog/book/1')
 
+    def test_title_is_not_null(self):
+        book = Book.objects.get(id=1)
+        self.assertIsNotNone(book.title)
+
 class BookInstanceModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
