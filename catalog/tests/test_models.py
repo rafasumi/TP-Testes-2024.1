@@ -214,6 +214,21 @@ class UserCreationTest(TestCase):
         self.assertEqual(user.first_name, 'John')
         self.assertEqual(user.last_name, 'Doe')
 
+    def test_create_invalid_user(self):
+        User = get_user_model()
+        user_data = {
+            'username': 'testuser~~',
+            'password': 'secret123',
+            'email': 'test@example.com',
+            'first_name': 'John',
+            'last_name': 'Doe',
+        }
+
+        user = User.objects.create_user(**user_data)
+        
+        with self.assertRaises(ValidationError):
+            user.full_clean()
+
     def test_create_user_with_invalid_email(self):
         User = get_user_model()
         user_data = {
@@ -243,6 +258,13 @@ class UserAuthenticationTest(TestCase):
 
         authenticated_user = authenticate(username='testuser', password='secret123')
         self.assertEqual(authenticated_user, user)
+
+    def test_user_authentication_with_invalid_username(self):
+        User = get_user_model()
+        User.objects.create_user(username='testuser', password='secret123', email='test@example.com')
+
+        authenticated_user = authenticate(username='nonexistentuser', password='secret123')
+        self.assertIsNone(authenticated_user)
 
     def test_user_authentication_with_invalid_password(self):
         User = get_user_model()
