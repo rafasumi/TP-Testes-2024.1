@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from catalog.models import Author, Genre, Book, BookInstance
+from catalog.models import Author, Genre, Book, BookInstance, User
 import datetime
 from django.utils import timezone
 from django.contrib.auth.hashers import check_password
@@ -66,6 +66,25 @@ class GenreModelTest(TestCase):
         self.assertEqual(help_text, 'Insira um gênero literário')
 
     #  testar o UniqueConstraint?
+
+class UserModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User = get_user_model()
+        user_data = {
+            'username': 'testuser',
+            'password': 'secret123',
+            'email': 'test@example.com',
+            'first_name': 'John',
+            'last_name': 'Doe',
+        }
+
+        User.objects.create_user(**user_data)
+
+    def test_can_borrow_book(self):
+        user  = User.objects.get(id=1)
+        self.assertEqual(user.can_borrow_book, True)
+
         
 class BookModelTest(TestCase):
     @classmethod
@@ -133,9 +152,49 @@ class BookInstanceModelTest(TestCase):
         test_book  = Book.objects.create(title='Dom Casmurro', author=author, summary='Summary Test', isbn='0000000')
         test_book.genre.set(genre_objects_for_book)
 
-        return_date = timezone.localtime() + datetime.timedelta(days=4)
+        User = get_user_model()
+        user_data = {
+            'username': 'testuser',
+            'password': 'secret123',
+            'email': 'test@example.com',
+            'first_name': 'John',
+            'last_name': 'Doe',
+        }
 
-        BookInstance.objects.create(book=test_book, imprint='Unlikely Imprint, 2016', due_back=return_date, borrower='testuser1', status='r')
+        User.objects.create_user(**user_data)
+
+    def test_can_borrow_book_limit(self):
+        return_date = timezone.localtime() + datetime.timedelta(days=4)
+        user  = User.objects.get(id=1)
+        test_book = Book.objects.get(id=1)
+        BookInstance.objects.create(book=test_book, imprint='Unlikely Imprint, 2016', due_back=return_date, borrower=user, status='r')
+        self.assertEqual(user.can_borrow_book, True)
+
+    def test_can_not_borrow_book_limit(self):
+        return_date = timezone.localtime() + datetime.timedelta(days=4)
+        user  = User.objects.get(id=1)
+        test_book = Book.objects.get(id=1)
+        BookInstance.objects.create(book=test_book, imprint='Unlikely Imprint, 2016', due_back=return_date, borrower=user, status='r')
+        BookInstance.objects.create(book=test_book, imprint='Unlikely Imprint, 2016', due_back=return_date, borrower=user, status='r')
+        BookInstance.objects.create(book=test_book, imprint='Unlikely Imprint, 2016', due_back=return_date, borrower=user, status='r')
+        self.assertEqual(user.can_borrow_book, False)
+
+    def test_can_borrow_book_due_back(self):
+        return_date = timezone.localtime() + datetime.timedelta(days=4)
+        user  = User.objects.get(id=1)
+        test_book = Book.objects.get(id=1)
+        BookInstance.objects.create(book=test_book, imprint='Unlikely Imprint, 2016', due_back=return_date, borrower=user, status='r')
+        BookInstance.objects.create(book=test_book, imprint='Unlikely Imprint, 2016', due_back=return_date, borrower=user, status='r')
+        self.assertEqual(user.can_borrow_book, True)
+
+    def test_can_not_borrow_book_due_back(self):
+        return_date = timezone.localtime() - datetime.timedelta(days=1)
+        user  = User.objects.get(id=1)
+        test_book = Book.objects.get(id=1)
+        BookInstance.objects.create(book=test_book, imprint='Unlikely Imprint, 2016', due_back=return_date, borrower=user, status='r')
+        BookInstance.objects.create(book=test_book, imprint='Unlikely Imprint, 2016', due_back=return_date, borrower=user, status='r')
+        self.assertEqual(user.can_borrow_book, False)
+
 
 class UserCreationTest(TestCase):
     def test_create_valid_user(self):
