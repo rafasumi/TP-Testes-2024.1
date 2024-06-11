@@ -130,3 +130,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Settings Selenium
+
+SELENIUM_DISPLAY = ':1'
+SELENIUM_DRIVER = 'Chrome'
+SELENIUM_DRIVER_OPTS = {
+    'executable_path': 'C:\Windows\chromedriver-win64\chromedriver.exe',
+    'options': ['--headless', '--no-sandbox']
+}
+
+SELENIUM_DRIVER_PATH = 'C:\Windows\chromedriver-win64\chromedriver.exe'
+
+# Configuração do caminho do documento raiz para arquivos estáticos
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Configuração do caminho do documento raiz para arquivos de mídia
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
