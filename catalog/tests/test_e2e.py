@@ -1,14 +1,12 @@
-# tests.py em um dos seus aplicativos Django
-
-from django.test import LiveServerTestCase
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from django.conf import settings
 import chromedriver_autoinstaller
 
-class MySeleniumTests(LiveServerTestCase):
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from django.test import tag
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 
+class E2ETests(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -28,7 +26,14 @@ class MySeleniumTests(LiveServerTestCase):
         cls.selenium.quit()
         super().tearDownClass()
 
-    def test_example(self):
-        #pra testar se seu selenium ta funcionando
+    @tag('e2e')
+    def test_home_not_authenticated(self):
         self.selenium.get(f'{self.live_server_url}/')
+
         self.assertIn("Bib Xulambis", self.selenium.title)
+        
+        main_header = self.selenium.find_element(By.TAG_NAME, 'h1').text
+        self.assertIn("Bib", main_header)
+        
+        welcome_message = self.selenium.find_element(By.TAG_NAME, 'p').text
+        self.assertIn("Bem-vindo ao site da biblioteca municipal de Xulambis", welcome_message)
