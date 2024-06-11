@@ -130,3 +130,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Settings Selenium
+SELENIUM_DISPLAY = ':1'
+SELENIUM_DRIVER = 'Chrome'
