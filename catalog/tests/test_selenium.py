@@ -5,20 +5,22 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from django.conf import settings
+import chromedriver_autoinstaller
 
 class MySeleniumTests(LiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+
+        chromedriver_autoinstaller.install()
         
         chrome_options = Options()
-        chrome_options.add_argument('--headless')  # Executar em modo headless
+        chrome_options.add_argument('--headless')
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--disable-dev-shm-usage')
 
-        service = Service(settings.SELENIUM_DRIVER_PATH)
-        cls.selenium = webdriver.Chrome(service=service, options=chrome_options)
+        cls.selenium = webdriver.Chrome(options=chrome_options)
         cls.selenium.implicitly_wait(10)
 
     @classmethod

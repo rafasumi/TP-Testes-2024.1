@@ -135,12 +135,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SELENIUM_DISPLAY = ':1'
 SELENIUM_DRIVER = 'Chrome'
-SELENIUM_DRIVER_OPTS = {
-    'executable_path': 'C:\Windows\chromedriver-win64\chromedriver.exe',
-    'options': ['--headless', '--no-sandbox']
-}
-
-SELENIUM_DRIVER_PATH = 'C:\Windows\chromedriver-win64\chromedriver.exe'
 
 # Configuração do caminho do documento raiz para arquivos estáticos
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
