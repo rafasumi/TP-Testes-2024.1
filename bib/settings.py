@@ -132,12 +132,5 @@ LOGIN_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Settings Selenium
-
 SELENIUM_DISPLAY = ':1'
 SELENIUM_DRIVER = 'Chrome'
-
-# Configuração do caminho do documento raiz para arquivos estáticos
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-# Configuração do caminho do documento raiz para arquivos de mídia
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
