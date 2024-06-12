@@ -5,6 +5,7 @@ from django.test import tag
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from catalog.models import User
 
 class E2ETests(StaticLiveServerTestCase):
     @classmethod
@@ -37,3 +38,40 @@ class E2ETests(StaticLiveServerTestCase):
         
         welcome_message = self.selenium.find_element(By.TAG_NAME, 'p').text
         self.assertIn("Bem-vindo ao site da biblioteca municipal de Xulambis", welcome_message)
+
+    @tag('e2e')
+    def test_user_login_is_success(self):
+        self.selenium.get(f'{self.live_server_url}/accounts/login/')
+
+        User.objects.create_user(username='testuser', password='secret')
+
+        username_field = self.selenium.find_element(By.NAME, 'username')
+        password_field = self.selenium.find_element(By.NAME, 'password')
+        submit_button = self.selenium.find_element(By.XPATH, "//input[@type='submit']")
+
+        username_field.send_keys('testuser')
+        password_field.send_keys('secret')
+
+        submit_button.click()
+        
+        self.assertIn("catalog/", self.selenium.current_url)
+
+    @tag('e2e')
+    def test_user_login_is_fail(self):
+        self.selenium.get(f'{self.live_server_url}/accounts/login/')
+
+        User.objects.create_user(username='testuser', password='secret')
+
+        username_field = self.selenium.find_element(By.NAME, 'username')
+        password_field = self.selenium.find_element(By.NAME, 'password')
+        submit_button = self.selenium.find_element(By.XPATH, "//input[@type='submit']")
+
+        username_field.send_keys('testuserfailed')
+        password_field.send_keys('secret')
+
+        submit_button.click()
+
+        error_message = self.selenium.find_element(By.XPATH, "//p[contains(text(), 'Usuário ou senha incorretos. Tente novamente.')]")
+
+        self.assertIn("accounts/login/", self.selenium.current_url)
+        self.assertIsNotNone(error_message)
