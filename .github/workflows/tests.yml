@@ -37,4 +37,4 @@ jobs:
           python manage.py test --exclude-tag=e2e
       - name: Run system tests
         run: |
-          python manage.py test catalog/tests/test_e2e
+          python manage.py test catalog.tests.test_e2e
